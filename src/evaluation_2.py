@@ -1,33 +1,22 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "d8f586c2-967d-4ea3-87be-ff2635c7cb22",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python (soroni)",
-   "language": "python",
-   "name": "soroni"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.10.19"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+from sklearn.metrics import silhouette_score, davies_bouldin_score, adjusted_rand_score
+import pandas as pd
+
+def evaluate_clustering(X, pred_labels, true_labels=None):
+    results = {}
+
+    if len(set(pred_labels)) > 1:
+        results['silhouette'] = silhouette_score(X, pred_labels)
+        results['davies_bouldin'] = davies_bouldin_score(X, pred_labels)
+    else:
+        results['silhouette'] = -1
+        results['davies_bouldin'] = -1
+
+    if true_labels is not None:
+        results['ARI'] = adjusted_rand_score(true_labels, pred_labels)
+
+    return results
+
+
+def save_results(results_dict, filename="results/clustering_metrics.csv"):
+    df = pd.DataFrame(results_dict).T
+    df.to_csv(filename)
